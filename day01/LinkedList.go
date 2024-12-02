@@ -87,3 +87,25 @@ func (list *LinkedList) bubbleSort(){
 		}
 	}
 }
+func (list *LinkedList) in(data int) bool{
+	current := list.head
+	for current != nil{
+		if current.data == data{
+			return true
+		}
+		current = current.next
+	}
+	return false
+}
+
+func (list *LinkedList) timesIn(data int) int{
+	current := list.head
+	counter := 0 
+	for current != nil{
+		if current.data == data{
+			counter++
+		}
+		current = current.next
+	}
+	return counter
+}

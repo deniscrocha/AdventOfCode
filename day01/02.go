@@ -3,19 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func day01part01() {
+func day01part02() {
 	var leftList = &LinkedList{head: nil, length: 0}
 	var rightList = &LinkedList{head: nil, length: 0}
 
@@ -23,7 +16,6 @@ func day01part01() {
 	check(err)
 
 	scanner := bufio.NewScanner(file)
-
 	for scanner.Scan() {
 		line := scanner.Text()
 		result := strings.Split(line, "   ")
@@ -34,17 +26,20 @@ func day01part01() {
 		check(err)
 		rightList.insertAtBack(secondNum)
 	}
-	leftList.bubbleSort()
-	rightList.bubbleSort()
-	leftCurrent := leftList.head
-	rightCurrent := rightList.head
-	totalDif := 0
-	for leftCurrent != nil {
-		dif := leftCurrent.data - rightCurrent.data
-		dif = int(math.Abs(float64(dif)))
-		totalDif += dif
-		leftCurrent = leftCurrent.next
-		rightCurrent = rightCurrent.next
+	file.Close()
+
+	total := 0
+	current := leftList.head
+	for current != nil {
+		number := current.data
+		times := rightList.timesIn(number)
+		if times == 0 {
+			current = current.next
+			continue
+		}
+		fmt.Println(number, " ",times)
+		total += number * times
+		current = current.next
 	}
-	fmt.Println(totalDif)
+	fmt.Println(total)
 }
