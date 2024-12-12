@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 )
 
 func day03part02() {
@@ -12,33 +13,36 @@ func day03part02() {
 	doRegex := regexp.MustCompile(`do\(\)`)
 	dontRegex := regexp.MustCompile(`don't\(\)`)
 
-	file, err := os.Open("./test2.txt")
+	file, err := os.Open("./input.txt")
 	check(err)
 	scanner := bufio.NewScanner(file)
-	total := 0
-	var matches []string
 	var allLines string
+	var linesArray []string
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		allLines += line
 	}
+	linesArray = strings.Split(allLines, ")")
 
-	matches = mulRegex.FindAllString(allLines, -1)
+	var total int
+	var enabled bool = true
 
-	matchesIndex := mulRegex.FindAllStringIndex(allLines, -1)
-
-	var indexes []int
-
-	dont := dontRegex.FindAllStringIndex(allLines, -1)
-	do := doRegex.FindAllStringIndex(allLines, -1)
-
-
-	for i := 0; i < len(matches); i++ {
-		text := matches[i]
-		lhs, rhs := getNumbers(text)
-		total += lhs * rhs
+	for i := 0; i < len(linesArray); i++ {
+		linesArray[i] = linesArray[i] + ")"
+		itsMul := mulRegex.FindAllString(linesArray[i], 1)
+		itsDo := doRegex.FindAllString(linesArray[i], 1)
+		itsDont := dontRegex.FindAllString(linesArray[i], 1)
+		if itsDo != nil {
+			enabled = true
+		} else if itsDont != nil {
+			enabled = false
+		} else if itsMul != nil {
+			if enabled {
+				n1, n2 := getNumbers(itsMul[0])
+				total += n1 * n2
+			}
+		}
 	}
-
 	fmt.Println("part 02:", total)
 }
